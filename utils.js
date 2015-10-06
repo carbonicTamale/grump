@@ -8,7 +8,7 @@ var spawn  = require('child_process').spawn;
 var prompt = require('prompt');
 var _      = require('lodash');
 
-var serverApiUrl = "https://grumpjs.com/api/lib/";
+var serverApiUrl = "http://localhost:3000/api/lib/";
 
 // Local directory - wrap this around paths accessing the local
 // node module folder and not the CWD grump is being executed from
@@ -78,7 +78,8 @@ var validLocalGrump = function(grump) {
 var queryServer = function(grump, cb) {
   if (isVerbose()) console.log("Querying grumpjs server for " + grump.cyan);
 
-  https.get(serverApiUrl + grump, function (res) {
+  console.log(serverApiUrl + grump);
+  http.get(serverApiUrl + grump, function (res) {
     if (isVerbose()) console.log("Received statusCode " + res.statusCode.toString().green + " from server.");
 
     if (res.statusCode === 404) {
