@@ -7,6 +7,7 @@ var exec   = require('child-process-promise').exec;
 var spawn  = require('child_process').spawn;
 var prompt = require('prompt');
 var _      = require('lodash');
+var alias  = require('./cmds/use.js');
 
 var serverApiUrl = "http://localhost:3000/api/lib/";
 
@@ -43,25 +44,15 @@ var initialRun = function() {
 
 // Scan lib directory for installed grumps
 var getInstalledGrumps = function() {
-  var name = [];
-  var specific = [];
-  var combo = {};
-
-  var grumps = fs.readdirSync(lodir('lib'));
-  grumps.forEach(function(grump) {
-    var group = [];
-    var sub = fs.readdirSync(lodir('lib', grump));
-
-    name.push(grump);
-    sub.map(function(item) {
-      group.push([item, grump]);
-      specific.push(item + "/" + grump);
-    });
-
-    combo[grump] = group;
+  var grumps;
+  fs.readfileSync(lodir('lib/grumpTable.json'), function (err, data) {
+    if(err) {
+      grumps = {};
+    } else {
+      grumps = data;
+    }
   });
-
-  return [name, specific, combo];
+  return grumps;
 };
 
 // Check if grump ( specific (keith/hello) or general (hello) ) exists
