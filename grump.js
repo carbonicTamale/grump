@@ -41,7 +41,6 @@ if (args.length === 0 && cmds.indexOf(action) === -1) {
 
 // Specified command
 } else if (cmds.indexOf(action) !== -1) {
-  // require('./cmds/' + action)(args);
   console.log('command not found'.red);
 
 // Version data
