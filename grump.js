@@ -30,7 +30,7 @@ if (cmds.indexOf(args[0]) !== -1) {
 
 // Verbose logging
 if (utils.isVerbose()) {
-  console.log("Loaded " + installedGrumps[1].length.toString().green + " grump" + (installedGrumps.length === 1 ? "" : "s"));
+  console.log("Loaded all the grumps".green);
   console.log("Action received:\t", action.green);
   console.log("Arguments received:\t", args.toString().cyan + "\n");
 }
@@ -41,8 +41,7 @@ if (args.length === 0 && cmds.indexOf(action) === -1) {
 
 // Specified command
 } else if (cmds.indexOf(action) !== -1) {
-  console.log('command not found'.red);
-
+  require('./cmds/' + action)(args);
 // Version data
 } else if (args[0] === "--version" || args[0] === "-v") {
   console.log("grump version " + pack.version);
