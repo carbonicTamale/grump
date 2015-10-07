@@ -110,22 +110,23 @@ var queryServer = function(grump, cb) {
 };
 
 var install = function(repo, cb) {
+  var repoName = repo.repoName;
   var command = repo.defaultCommand;
   var author  = repo.author;
-  if (isVerbose()) { console.log("Installing " + author.green + "/" + command.cyan + "..."); }
+  if (isVerbose()) { console.log("Installing " + author.green + "/" + repoName.cyan + "..."); }
 
   // Recursively create command and author directory
-  mkdirp.sync(lodir("lib", command, author));
+  mkdirp.sync(lodir("lib", repoName, author));
 
   // Clone from github
-  var gitCloneCommand = 'git clone ' + repo.cloneUrl + ' ' + lodir("lib", command, author);
+  var gitCloneCommand = 'git clone ' + repo.cloneUrl + ' ' + lodir("lib", repoName, author);
   exec(gitCloneCommand)
   .fail(function (err) {
     console.log("Error".red + ": Something went wrong while attempting to clone " + grump.cyan + ".");
   })
   .then(function () {
     // Write repo json file
-    fs.writeFile(lodir("lib", command, author, ".grumpInstall.json"), JSON.stringify(repo), function(err) {
+    fs.writeFile(lodir("lib", repoName, author, ".grumpInstall.json"), JSON.stringify(repo), function(err) {
       if (err) {
         console.log("Error".red + ": Something went wrong while attempting to write Grump Installation file.");
       } else {
