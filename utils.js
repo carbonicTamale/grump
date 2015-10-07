@@ -140,10 +140,10 @@ var install = function(repo, installedGrumps) {
 
     var authorKey = author + ":" + command;
     var repoKey = repoName + ":" + command;
-    var repoAuthorKey = repoName + "/" + author + ":" + command;
+    var authorRepoKey = author + "/" + repoName + ":" + command;
     var commandKey = command;
     var value = [lodir('lib', repoName, author), command];
-    var keys = [authorKey, repoKey, repoAuthorKey, commandKey];
+    var keys = [authorKey, repoKey, authorRepoKey, commandKey];
     
     for (var i = 0; i < keys.length; i++) {
       installedGrumps[keys[i]] = installedGrumps[keys[i]] || [];
