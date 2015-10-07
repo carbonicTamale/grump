@@ -4,11 +4,11 @@ var color = require('colors');
 var utils = require('../utils.js');
 
 module.exports = function () {
-  fs.writeFile(utils.lodir('lib', 'alias.txt'), '', 'utf-8', function (err) {
+  fs.writeFile(utils.lodir('lib', 'prefix.txt'), '', 'utf-8', function (err) {
     if(err) {
-      console.log("Alias not cleared, error:", err.red);
+      console.log("prefix not cleared, error:", err.red);
     } else {
-      console.log("Alias cleared.".cyan);
+      console.log("prefix cleared.".cyan);
     }
   });
 };
