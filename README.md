@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/carbonicTamale/grump.png?label=ready&title=Ready)](https://waffle.io/carbonicTamale/grump)
 
 ##**What is a Grump?**
 A Grump is any task or set of tasks you want to be able to run with a single command from your terminal. 
