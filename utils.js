@@ -47,13 +47,25 @@ var getInstalledGrumps = function() {
   var grumps;
   fs.readfileSync(lodir('lib/grumpTable.json'), function (err, data) {
     if(err) {
-      grumps = {};
+      return {};
     } else {
       grumps = data;
     }
   });
-  return grumps;
+  return JSON.parse(grumps);
 };
+
+
+/*=============================
+=            NOTES            =
+=============================*/
+/**
+ *
+ * validLocalGrump needs to be fixed
+ *
+ */
+
+
 
 // Check if grump ( specific (keith/hello) or general (hello) ) exists
 var validLocalGrump = function(grump) {
@@ -100,10 +112,11 @@ var queryServer = function(grump, cb) {
   });
 };
 
-var install = function(repo, cb) {
+var install = function(repo, installedGrumps) {
+
   var repoName = repo.repoName;
-  var command = repo.defaultCommand;
   var author  = repo.author;
+
   if (isVerbose()) { console.log("Installing " + author.green + "/" + repoName.cyan + "..."); }
 
   // Recursively create command and author directory
@@ -116,15 +129,37 @@ var install = function(repo, cb) {
     console.log("Error".red + ": Something went wrong while attempting to clone " + grump.cyan + ".");
   })
   .then(function () {
-    // Write repo json file
-    fs.writeFile(lodir("lib", repoName, author, ".grumpInstall.json"), JSON.stringify(repo), function(err) {
-      if (err) {
-        console.log("Error".red + ": Something went wrong while attempting to write Grump Installation file.");
-      } else {
-        cb();
+
+    //get grump.json file
+    var grumpjson = JSON.parse(fs.readFileSync(lodir("lib", repoName, author, "grump.json"), 'utf-8'));
+
+    //get all of the commands in the grump.json file, and add it to our table entry
+    for(var key in grumpjson.commands) {
+      installScript(key);
+    }
+
+    fs.writeFileSync(lodir('lib', 'grumpTable.json'), installedGrumps, function (err, data) {
+      if(err) {
+        console.log("New grump failed to install".red);
       }
     });
   });
+
+  function installScript (command) {
+
+    var authorKey = author + ":" + command;
+    var repoKey = repoName + ":" + command;
+    var repoAuthorKey = repoName + "/" + author + ":" + command;
+    var commandKey = command;
+    var value = [lodir('lib',repoName, author), command];
+    var keys = [authorKey, repoKey, repoAuthorKey, commandKey];
+    
+    for (var i = 0; i < keys.length; i++) {
+      installedGrumps[keys[i]] = installedGrumps[keys[i]] || [];
+      installedGrumps[keys[i]].push(value);
+    }
+  }
+
 };
 
 
