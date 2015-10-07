@@ -6,6 +6,14 @@ var color = require('colors');
 var utils = require('./utils.js');
 var pack  = require('./package.json');
 
+var prefix;
+try {
+  prefix = fs.readFileSync(utils.lodir('lib', 'prefix.txt'));
+} catch(e) {
+  console.log(e);
+  prefix = '';
+}
+
 var args  = process.argv.slice(2);
 console.log('args =', args);
 // Perform initial run actions for 1st time running grump

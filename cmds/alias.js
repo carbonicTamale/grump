@@ -24,7 +24,7 @@ module.exports = function (args) {
       installedGrumps[alias] = installedGrumps[alias] || [];
       installedGrumps[alias].push(installedGrumps[grump][0]);
     }
-
+    
     try {
       fs.writeFileSync(utils.lodir('lib', 'grumpTable.json');
         console.log('Alias for ' + grump.cyan + 'set as ' + alias.cyan);

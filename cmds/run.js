@@ -2,7 +2,6 @@ var path  = require('path');
 var fs    = require('fs');
 var color = require('colors');
 var utils = require('../utils.js');
-var alias = require('use.js');
 
 module.exports = function(args, installedGrumps) {
   var collection = args[0].split(':')[0];
