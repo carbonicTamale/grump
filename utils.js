@@ -45,14 +45,12 @@ var initialRun = function() {
 // Scan lib directory for installed grumps
 var getInstalledGrumps = function() {
   var grumps;
-  fs.readfileSync(lodir('lib/grumpTable.json'), function (err, data) {
-    if(err) {
-      return {};
-    } else {
-      grumps = data;
-    }
-  });
-  return JSON.parse(grumps);
+  try {
+    return JSON.parse(fs.readFileSync(lodir('lib/grumpTable.json')));
+  }
+  catch(e) {
+    return {};
+  }
 };
 
 
@@ -151,7 +149,7 @@ var install = function(repo, installedGrumps) {
     var repoKey = repoName + ":" + command;
     var repoAuthorKey = repoName + "/" + author + ":" + command;
     var commandKey = command;
-    var value = [lodir('lib',repoName, author), command];
+    var value = [lodir('lib', repoName, author), command];
     var keys = [authorKey, repoKey, repoAuthorKey, commandKey];
     
     for (var i = 0; i < keys.length; i++) {
@@ -163,21 +161,23 @@ var install = function(repo, installedGrumps) {
 };
 
 
-var run = function(grump, args) {
-  var split = grump.indexOf("/");
-  var commandName = grump.substr(split+1);
-  var author = grump.substr(0, split);
-
-  console.log("Executing grump " + author.green + "/" + commandName.cyan + "...");
-
-  // Get the grump.json file
-  var grumpjson = JSON.parse(fs.readFileSync(lodir("lib", commandName, author, "grump.json"), 'utf-8'));
+var run = function(data) {
+  var path = data[0];
+  var command = data[1];
+  var grumpjson;
+  try {
+    grumpjson = JSON.parse(fs.readFileSync(path + '/grump.json'));
+  }
+  catch(e) {
+    console.err('Error: could not find grump.json');
+  }
 
   // Extract default command config
-  var defaultCommand = grumpjson.defaultCommand;
-  var type = grumpjson.commands[defaultCommand].scriptType;
-  var file = grumpjson.commands[defaultCommand].scriptPath;
-  var grumpPath = lodir("lib", commandName, author, file);
+  var type = grumpjson.commands[command].scriptType;
+  var file = grumpjson.commands[command].scriptPath;
+
+  var grumpPath = path + '/' + file;
+  // var grumpPath = lodir("lib", command, author, file);
 
   // Determine how to run the script
   var cmd;
