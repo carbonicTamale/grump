@@ -3,7 +3,7 @@ var fs = require('fs');
 var color = require('colors');
 var utils = require('../utils.js');
 
-module.exports = function(args) {
+module.exports = function(args, installedGrumps) {
   // Check if the grump is installed locally
   if (!utils.validLocalGrump(grump)) {
     if (utils.isVerbose()) {
@@ -33,13 +33,7 @@ module.exports = function(args) {
           // Only 1 grump found, ready to install/run
         } else if (res.grumps.length === 1) {
           // install it
-          utils.install(res.grumps[0], function() {
-
-            // and then pass in the args and run it
-            var chosen = res.grumps[0];
-            // utils.run(chosen.author + "/" + chosen.defaultCommand, args.slice(1));
-            console.log('Grump successfully installed.'.green);
-          });
+          utils.install(res.grumps[0], installedGrumps);
 
           // No grumps found
         } else {
