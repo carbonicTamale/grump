@@ -41,7 +41,8 @@ if (args.length === 0 && cmds.indexOf(action) === -1) {
 
 // Specified command
 } else if (cmds.indexOf(action) !== -1) {
-  require('./cmds/' + action)(args);
+  // require('./cmds/' + action)(args);
+  console.log('command not found'.red);
 
 // Version data
 } else if (args[0] === "--version" || args[0] === "-v") {
@@ -49,5 +50,10 @@ if (args.length === 0 && cmds.indexOf(action) === -1) {
 
 // Assume they want to run/install the package if no previous commands/actions match
 } else {
-    require('./cmds/run')(args);
+    if (action === 'install') {
+      require('./cmds/install')(args);
+    }
+    else {
+      require('./cmds/run')(args);
+    }
 }
