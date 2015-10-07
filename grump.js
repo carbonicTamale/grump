@@ -18,7 +18,7 @@ fs.readdirSync(utils.lodir('./cmds')).forEach(function(file) {
 });
 
 // Get installed grumps
-var grumps = utils.getInstalledGrumps();
+var installedGrumps = utils.getInstalledGrumps();
 
 // Find out if they are querying with action
 // or just sending in a package name
@@ -30,7 +30,7 @@ if (cmds.indexOf(args[0]) !== -1) {
 
 // Verbose logging
 if (utils.isVerbose()) {
-  console.log("Loaded " + grumps[1].length.toString().green + " grump" + (grumps.length === 1 ? "" : "s"));
+  console.log("Loaded " + installedGrumps[1].length.toString().green + " grump" + (installedGrumps.length === 1 ? "" : "s"));
   console.log("Action received:\t", action.green);
   console.log("Arguments received:\t", args.toString().cyan + "\n");
 }
@@ -51,9 +51,9 @@ if (args.length === 0 && cmds.indexOf(action) === -1) {
 // Assume they want to run/install the package if no previous commands/actions match
 } else {
     if (action === 'install') {
-      require('./cmds/install')(args);
+      require('./cmds/install')(args, installedGrumps);
     }
     else {
-      require('./cmds/run')(args);
+      require('./cmds/run')(args, installedGrumps);
     }
 }
