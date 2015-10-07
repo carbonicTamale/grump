@@ -66,13 +66,8 @@ var getInstalledGrumps = function() {
 
 
 // Check if grump ( specific (keith/hello) or general (hello) ) exists
-var validLocalGrump = function(grump) {
-  var type = 0;
-  if (grump.indexOf("/") !== -1) {
-    type = 1;
-  }
-
-  return ((getInstalledGrumps()[type].indexOf(grump)) === -1) ? false : true;
+var validLocalGrump = function(grump, installedGrumps) {
+  return installedGrumps.hasOwnProperty(grump);
 };
 
 // Query Grumpjs server for grump
@@ -127,7 +122,7 @@ var install = function(repo, installedGrumps) {
     console.log("Error".red + ": Something went wrong while attempting to clone " + grump.cyan + ".");
   })
   .then(function () {
-
+    console.log('In the promise then'.green);
     //get grump.json file
     var grumpjson = JSON.parse(fs.readFileSync(lodir("lib", repoName, author, "grump.json"), 'utf-8'));
 
@@ -135,12 +130,10 @@ var install = function(repo, installedGrumps) {
     for(var key in grumpjson.commands) {
       installScript(key);
     }
+    console.log(installedGrumps);
+    installedGrumps = JSON.stringify(installedGrumps);
+    fs.writeFileSync(lodir('lib', 'grumpTable.json'), JSON.stringify(installedGrumps), 'utf8');
 
-    fs.writeFileSync(lodir('lib', 'grumpTable.json'), installedGrumps, function (err, data) {
-      if(err) {
-        console.log("New grump failed to install".red);
-      }
-    });
   });
 
   function installScript (command) {
@@ -162,6 +155,7 @@ var install = function(repo, installedGrumps) {
 
 
 var run = function(data) {
+  console.log('This is in utils.run', data);
   var path = data[0];
   var command = data[1];
   var grumpjson;

@@ -10,7 +10,7 @@ var prefix;
 try {
   prefix = fs.readFileSync(utils.lodir('lib', 'prefix.txt'));
 } catch(e) {
-  console.log(e);
+  console.log("No alias set".red);
   prefix = '';
 }
 
@@ -48,7 +48,7 @@ if (args.length === 0 && cmds.indexOf(action) === -1) {
   console.log("usage: grump [action/package] [args]");
 
 // Specified command
-} else if (cmds.indexOf(action) !== -1) {
+} else if (cmds.indexOf(action) !== -1 && action !== 'install') {
   require('./cmds/' + action)(args);
 
 // Version data
@@ -58,6 +58,7 @@ if (args.length === 0 && cmds.indexOf(action) === -1) {
 // Assume they want to run/install the package if no previous commands/actions match
 } else {
     if (action === 'install') {
+      console.log('installed grumps',installedGrumps);
       require('./cmds/install')(args, installedGrumps);
     }
     else {

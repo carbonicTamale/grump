@@ -4,6 +4,7 @@ var color = require('colors');
 var utils = require('../utils.js');
 
 module.exports = function(args, installedGrumps) {
+  console.log('In Run.js', args);
   var collection = args[0].split(':')[0];
   var grump = args[0].split(':')[1];
 
@@ -18,7 +19,7 @@ module.exports = function(args, installedGrumps) {
 
   // Or else just run the grump
   } else {
-    if (installedGrumps[args].length > 1) {
+    if (installedGrumps[args[0]].length > 1) {
       console.log('Multiple grumps exist');
 
       /*================================================
@@ -27,7 +28,7 @@ module.exports = function(args, installedGrumps) {
       
     }
     else {
-      utils.run(installedGrumps[args][0]);
+      utils.run(installedGrumps[args[0]][0]);
     }
 
 

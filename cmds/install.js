@@ -5,7 +5,9 @@ var utils = require('../utils.js');
 
 module.exports = function(args, installedGrumps) {
   // Check if the grump is installed locally
-  if (!utils.validLocalGrump(grump)) {
+  var grump = args[0];
+
+  if (!utils.validLocalGrump(grump, installedGrumps)) {
     if (utils.isVerbose()) {
       console.log("Error".red + ": grump " + grump.cyan + " was not found locally...querying server...");
     }
@@ -15,7 +17,7 @@ module.exports = function(args, installedGrumps) {
         if (err.code === "ENOTFOUND") {
           console.log("Error".red + ": Unable to contact grump servers. Are you online?");
         } else {
-          console.log(err);
+          console.log('queryServer error: ',err);
         }
       } else {
 
@@ -33,6 +35,7 @@ module.exports = function(args, installedGrumps) {
           // Only 1 grump found, ready to install/run
         } else if (res.grumps.length === 1) {
           // install it
+          console.log(res.grumps[0]);
           utils.install(res.grumps[0], installedGrumps);
 
           // No grumps found
