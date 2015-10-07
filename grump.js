@@ -42,6 +42,7 @@ if (args.length === 0 && cmds.indexOf(action) === -1) {
 // Specified command
 } else if (cmds.indexOf(action) !== -1) {
   require('./cmds/' + action)(args);
+
 // Version data
 } else if (args[0] === "--version" || args[0] === "-v") {
   console.log("grump version " + pack.version);
