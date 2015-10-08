@@ -134,7 +134,7 @@ var install = function(repo, installedGrumps) {
     for(var key in grumpjson.commands) {
       installScript(key);
     }
-    
+
     fs.writeFileSync(lodir('lib', 'grumpTable.json'), JSON.stringify(installedGrumps), 'utf8');
 
   });
