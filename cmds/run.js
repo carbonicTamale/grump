@@ -31,7 +31,7 @@ module.exports = function(args, installedGrumps) {
       
     }
     else {
-      utils.run(installedGrumps[args[0]][0]);
+      utils.run(installedGrumps[args[0]][0], args.slice(1));
     }
 
 
