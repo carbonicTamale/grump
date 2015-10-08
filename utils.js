@@ -46,7 +46,8 @@ var initialRun = function() {
 var getInstalledGrumps = function() {
   var grumps;
   try {
-    return JSON.parse(fs.readFileSync(lodir('lib/grumpTable.json')));
+    var data = fs.readFileSync(lodir('lib/grumpTable.json'), 'utf-8');
+    return JSON.parse(JSON.parse(data));
   }
   catch(e) {
     return {};
