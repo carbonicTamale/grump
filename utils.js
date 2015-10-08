@@ -175,12 +175,12 @@ var run = function(data) {
   // var grumpPath = lodir("lib", command, author, file);
 
   // Determine how to run the script
-  var cmd;
-  if (type === "bash") {
-    cmd = "sh";
-  } else if (type === "node") {
-    cmd = "node";
-  }
+  var cmd = grumpjson.commands[command].runWith;
+  // if (type === "bash") {
+  //   cmd = "sh";
+  // } else if (type === "node") {
+  //   cmd = "node";
+  // }
 
   // Set up arguments to be passed into spawn
   args.unshift(grumpPath);
