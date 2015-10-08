@@ -51,6 +51,7 @@ module.exports = function(args, installedGrumps) {
           // Only 1 grump found, ready to install/run
         } else if (res.grumps.length === 1) {
           // install it
+          console.log("installing!");
           console.log(res.grumps[0]);
           utils.install(res.grumps[0], installedGrumps);
 

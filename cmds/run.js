@@ -2,6 +2,7 @@ var path  = require('path');
 var fs    = require('fs');
 var color = require('colors');
 var utils = require('../utils.js');
+var inquirer = require('inquirer');
 
 module.exports = function(args, installedGrumps) {
 
@@ -22,9 +23,23 @@ module.exports = function(args, installedGrumps) {
     else if (installedGrumps[args[0]].length > 1) {
       console.log('Multiple grumps exist');
 
-      /*================================================
-      =            add grump selection here            =
-      ================================================*/
+      var choices = res.grumps.map(function(grump) {
+        return grump.author + "/" + grump.defaultCommand;
+      });
+
+      var question = {
+        type: 'list',
+        choices: choices,
+        message: 'Choose a grump to install',
+        name: 'install'
+      };
+
+
+      inquirer.prompt([question], function( answers ) {
+        var chosenIndex = choices.indexOf(answers.install);
+        utils.install(res.grumps[chosenIndex], installedGrumps);
+      });
+
       
     }
     else {

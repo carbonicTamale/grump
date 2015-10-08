@@ -4,6 +4,7 @@ var http   = require('http');
 var https  = require("follow-redirects").https;
 var mkdirp = require('mkdirp');
 var exec   = require('child-process-promise').exec;
+
 var spawn  = require('child_process').spawn;
 var prompt = require('prompt');
 var _      = require('lodash');
@@ -51,6 +52,19 @@ var getInstalledGrumps = function() {
   catch(e) {
     return {};
   }
+};
+
+var grumpFromData = function(data) {
+  var repoName = data[0].match(/^.*lib\/(.+)?\/.*/)[1];
+  var author = data[0].match(new RegExp('^.*' + repoName + '\/(.+)', ''))[1];
+  var path = data[0];
+  var command = data[1];
+  return {
+    path: path,
+    repoName: repoName,
+    command: command,
+    author: author
+  };
 };
 
 
@@ -117,9 +131,12 @@ var install = function(repo, installedGrumps) {
 
   // Clone from github
   var gitCloneCommand = 'git clone ' + repo.cloneUrl + ' ' + lodir("lib", repoName, author);
+  console.log(gitCloneCommand);
   exec(gitCloneCommand)
   .fail(function (err) {
-    console.log("Error".red + ": Something went wrong while attempting to clone " + grump.cyan + ".");
+    console.log("Error".red + ": Something went wrong while attempting to clone " + repoName.cyan + ".");
+    console.log(undefined);
+    // console.log('bs\naoetuhaoei');
   })
   .then(function () {
 
@@ -154,11 +171,11 @@ var install = function(repo, installedGrumps) {
 
 
 var run = function(data, args) {
-  var repoName = data[0].match(/^.*lib\/(.+)?\/.*/)[1];
-  var author = data[0].match(new RegExp('^.*' + repoName + '\/(.+)', ''))[1];
-  var path = data[0];
-  var command = data[1];
-  var grumpjson;
+  var grump = grumpFromData(data);
+  var repoName = grump.repoName;
+  var author = grump.author;
+  var path = grump.path;
+  var command = grump.command;
   try {
     grumpjson = JSON.parse(fs.readFileSync(path + '/grump.json'));
   }
@@ -382,6 +399,7 @@ var run = function(data, args) {
 };
 
 exports.install = install;
+exports.grumpFromData = grumpFromData;
 exports.run = run;
 exports.queryServer = queryServer;
 exports.isVerbose = isVerbose;
