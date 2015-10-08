@@ -1,0 +1,8 @@
+{
+  "commands": {
+    "feed": {
+      "run": "sh",
+      "path": "index.sh"
+    }
+  }
+}
