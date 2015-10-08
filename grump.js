@@ -12,6 +12,7 @@ process.on('SIGINT', function() {
 });
 
 var prefix;
+
 try {
   prefix = fs.readFileSync(utils.lodir('lib', 'prefix.txt'));
 } catch (e) {
@@ -19,8 +20,8 @@ try {
   prefix = '';
 }
 
-var args = process.argv.slice(2);
-console.log('args =', args);
+var args  = process.argv.slice(2);
+
 // Perform initial run actions for 1st time running grump
 utils.initialRun();
 
@@ -62,10 +63,14 @@ if (args.length === 0 && cmds.indexOf(action) === -1) {
 
   // Assume they want to run/install the package if no previous commands/actions match
 } else {
-  if (action === 'install') {
-    console.log('installed grumps', installedGrumps);
-    require('./cmds/install')(args, installedGrumps);
-  } else {
-    require('./cmds/run')(args, installedGrumps);
-  }
+    if (action === 'install') {
+      require('./cmds/install')(args, installedGrumps);
+    }
+    else {
+      //Add prefix
+      if(prefix) {
+        args[0] = prefix + ":" + args[0];
+      }
+      require('./cmds/run')(args, installedGrumps);
+    }
 }
