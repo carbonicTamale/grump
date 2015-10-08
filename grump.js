@@ -49,12 +49,6 @@ if (utils.isVerbose()) {
   console.log("Arguments received:\t", args.toString().cyan + "\n");
 }
 
-//Add prefix
-if(prefix) {
-  args[0] = prefix + ":" + args[0];
-}
-console.log(args);
-
 // Execute commands
 if (args.length === 0 && cmds.indexOf(action) === -1) {
   console.log("usage: grump [action/package] [args]");
@@ -73,6 +67,10 @@ if (args.length === 0 && cmds.indexOf(action) === -1) {
       require('./cmds/install')(args, installedGrumps);
     }
     else {
+      //Add prefix
+      if(prefix) {
+        args[0] = prefix + ":" + args[0];
+      }
       require('./cmds/run')(args, installedGrumps);
     }
 }

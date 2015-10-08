@@ -46,10 +46,6 @@ var getInstalledGrumps = function() {
   var grumps;
   try {
     var data = fs.readFileSync(lodir('lib/grumpTable.json'), 'utf-8');
-    console.log('data =', data);
-    console.log('typeof data =', typeof data);
-    console.log('JSON.parse(data) =', JSON.parse(data));
-    console.log('typeof JSON.parse(data) =', typeof JSON.parse(data));
     return JSON.parse(data);
   }
   catch(e) {
