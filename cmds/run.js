@@ -19,7 +19,10 @@ module.exports = function(args, installedGrumps) {
 
   // Or else just run the grump
   } else {
-    if (installedGrumps[args[0]].length > 1) {
+    if (!installedGrumps.hasOwnProperty(args[0])) {
+      console.log('Grump not found.');
+    }
+    else if (installedGrumps[args[0]].length > 1) {
       console.log('Multiple grumps exist');
 
       /*================================================
