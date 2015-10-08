@@ -158,7 +158,7 @@ var install = function(repo, installedGrumps) {
 };
 
 
-var run = function(data) {
+var run = function(data, args) {
   console.log('This is in utils.run', data);
   var path = data[0];
   var command = data[1];
