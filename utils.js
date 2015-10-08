@@ -154,13 +154,11 @@ var install = function(repo, installedGrumps) {
 
 
 var run = function(data, args) {
-
   var repoName = data[0].match(/^.*lib\/(.+)?\/.*/)[1];
   var author = data[0].match(new RegExp('^.*' + repoName + '\/(.+)', ''))[1];
   var path = data[0];
   var command = data[1];
   var grumpjson;
-  var cmd;
   try {
     grumpjson = JSON.parse(fs.readFileSync(path + '/grump.json'));
   }
@@ -169,19 +167,13 @@ var run = function(data, args) {
   }
 
   // Extract default command config
-  var type = grumpjson.commands[command].scriptType;
-  var file = grumpjson.commands[command].scriptPath;
+  var file = grumpjson.commands[command].path;
 
   var grumpPath = path + '/' + file;
   // var grumpPath = lodir("lib", command, author, file);
 
   // Determine how to run the script
-  // var type = grumpjson.commands[command].scriptType;
-  if (type === "bash") {
-    cmd = "sh";
-  } else if (type === "node") {
-    cmd = "node";
-  }
+  var cmd = grumpjson.commands[command].run;
 
   // Set up arguments to be passed into spawn
   args.unshift(grumpPath);
@@ -298,7 +290,7 @@ var run = function(data, args) {
       var variables = {};
       // If not first time, there are vars to fetch from grump.json
       if (!init) {
-        variables = grumpjson.commands[defaultCommand].persist_vars;
+        variables = grumpjson.commands[command].persist_vars;
       }
 
       prompt.message = author.green + "/" + commandName.cyan;
@@ -309,13 +301,13 @@ var run = function(data, args) {
         if (init) {
 
           // Create new object to hold persist vars
-          grumpjson.commands[defaultCommand].persist_vars = {};
+          grumpjson.commands[command].persist_vars = {};
 
           _.each(results, function(result, key) {
 
             // Found a persist var
             if (persist_keys.indexOf(key) !== -1) {
-              grumpjson.commands[defaultCommand].persist_vars[key] = result;
+              grumpjson.commands[command].persist_vars[key] = result;
             }
           });
         }
