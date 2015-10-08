@@ -141,7 +141,14 @@ var install = function(repo, installedGrumps) {
     var repoKey = repoName + ":" + command;
     var authorRepoKey = author + "/" + repoName + ":" + command;
     var commandKey = command;
-    var value = [lodir('lib', repoName, author), command];
+
+    var value = {
+      repoName: repoName,
+      author: author,
+      command: command,
+      path: lodir('lib', repoName, author)
+    };
+
     var keys = [authorKey, repoKey, authorRepoKey, commandKey];
     
     for (var i = 0; i < keys.length; i++) {
@@ -154,10 +161,11 @@ var install = function(repo, installedGrumps) {
 
 
 var run = function(data, args) {
-  var repoName = data[0].match(/^.*lib\/(.+)?\/.*/)[1];
-  var author = data[0].match(new RegExp('^.*' + repoName + '\/(.+)', ''))[1];
-  var path = data[0];
-  var command = data[1];
+  var repoName = data.repoName;
+  var author = data.author;
+  var path = data.path;
+  var command = data.command;
+
   var grumpjson;
   try {
     grumpjson = JSON.parse(fs.readFileSync(path + '/grump.json'));
