@@ -1,20 +1,25 @@
 #!/usr/bin/env node
 
-var path  = require('path');
-var fs    = require('fs');
+var path = require('path');
+var fs = require('fs');
 var color = require('colors');
 var utils = require('./utils.js');
-var pack  = require('./package.json');
+var pack = require('./package.json');
+
+process.on('SIGINT', function() {
+  console.log('exiting');
+  process.exit();
+});
 
 var prefix;
 try {
   prefix = fs.readFileSync(utils.lodir('lib', 'prefix.txt'));
-} catch(e) {
+} catch (e) {
   console.log("No alias set".red);
   prefix = '';
 }
 
-var args  = process.argv.slice(2);
+var args = process.argv.slice(2);
 console.log('args =', args);
 // Perform initial run actions for 1st time running grump
 utils.initialRun();
@@ -33,7 +38,7 @@ var installedGrumps = utils.getInstalledGrumps();
 var action = "";
 if (cmds.indexOf(args[0]) !== -1) {
   action = args[0];
-  args   = args.slice(1);
+  args = args.slice(1);
 }
 
 // Verbose logging
@@ -47,21 +52,20 @@ if (utils.isVerbose()) {
 if (args.length === 0 && cmds.indexOf(action) === -1) {
   console.log("usage: grump [action/package] [args]");
 
-// Specified command
+  // Specified command
 } else if (cmds.indexOf(action) !== -1 && action !== 'install') {
   require('./cmds/' + action)(args);
 
-// Version data
+  // Version data
 } else if (args[0] === "--version" || args[0] === "-v") {
   console.log("grump version " + pack.version);
 
-// Assume they want to run/install the package if no previous commands/actions match
+  // Assume they want to run/install the package if no previous commands/actions match
 } else {
-    if (action === 'install') {
-      console.log('installed grumps',installedGrumps);
-      require('./cmds/install')(args, installedGrumps);
-    }
-    else {
-      require('./cmds/run')(args, installedGrumps);
-    }
+  if (action === 'install') {
+    console.log('installed grumps', installedGrumps);
+    require('./cmds/install')(args, installedGrumps);
+  } else {
+    require('./cmds/run')(args, installedGrumps);
+  }
 }
