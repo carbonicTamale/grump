@@ -10,12 +10,12 @@ module.exports = function (args) {
     return;
   }
 
-  var match = args[0].match(/(.+)?\/(.+)(?::)/);
+  var match = args[0].match(/(.+)?\/(.+)(?::)?/);
   if (!match) {
     console.log('Please list your grump in the following form:');
     console.log('<repo>/<username> OR <repo>/<username>:<command>');
     return;
   }
 
-  open('https://github.com/' + match[2] + '/' + match[1]);
+  open('https://github.com/' + match[1] + '/' + match[2]);
 };
