@@ -7,7 +7,6 @@ var exec   = require('child-process-promise').exec;
 var spawn  = require('child_process').spawn;
 var prompt = require('prompt');
 var _      = require('lodash');
-var alias  = require('./cmds/use.js');
 
 var serverApiUrl = "http://localhost:3000/api/lib/";
 
@@ -127,7 +126,7 @@ var install = function(repo, installedGrumps) {
     console.log("Error".red + ": Something went wrong while attempting to clone " + grump.cyan + ".");
   })
   .then(function () {
-    console.log('In the promise then'.green);
+
     //get grump.json file
     var grumpjson = JSON.parse(fs.readFileSync(lodir("lib", repoName, author, "grump.json"), 'utf-8'));
 
@@ -135,7 +134,7 @@ var install = function(repo, installedGrumps) {
     for(var key in grumpjson.commands) {
       installScript(key);
     }
-    console.log(installedGrumps);
+
     fs.writeFileSync(lodir('lib', 'grumpTable.json'), JSON.stringify(installedGrumps), 'utf8');
 
   });
@@ -159,10 +158,13 @@ var install = function(repo, installedGrumps) {
 
 
 var run = function(data, args) {
-  console.log('This is in utils.run', data);
+
+  var repoName = data[0].match(/^.*lib\/(.+)?\/.*/)[1];
+  var author = data[0].match(new RegExp('^.*' + repoName + '\/(.+)', ''))[1];
   var path = data[0];
   var command = data[1];
   var grumpjson;
+  var cmd;
   try {
     grumpjson = JSON.parse(fs.readFileSync(path + '/grump.json'));
   }
@@ -178,12 +180,12 @@ var run = function(data, args) {
   // var grumpPath = lodir("lib", command, author, file);
 
   // Determine how to run the script
-  var cmd = grumpjson.commands[command].runWith;
-  // if (type === "bash") {
-  //   cmd = "sh";
-  // } else if (type === "node") {
-  //   cmd = "node";
-  // }
+  // var type = grumpjson.commands[command].scriptType;
+  if (type === "bash") {
+    cmd = "sh";
+  } else if (type === "node") {
+    cmd = "node";
+  }
 
   // Set up arguments to be passed into spawn
   args.unshift(grumpPath);
@@ -275,7 +277,7 @@ var run = function(data, args) {
     var persist_keys     = [];
     var non_persist_keys = [];
 
-    _.each(grumpjson.commands[defaultCommand].vars, function(variable, key) {
+    _.each(grumpjson.commands[command].vars, function(variable, key) {
       if (variable.persist && variable.persist.toString() === "true") {
         persist[key] = variable;
         persist_keys.push(key);
@@ -329,6 +331,7 @@ var run = function(data, args) {
   }
 
   function runGrump(cmd, args, cb) {
+
     var childProcess = spawn(cmd, args, {stdio: [
       0, // use parents stdin for child
       'pipe', // pipe child's stdout to parent
@@ -364,7 +367,7 @@ var run = function(data, args) {
   }
 
   function updateGrumpJSON(obj) {
-    fs.writeFileSync(lodir("lib", commandName, author, "grump.json"), JSON.stringify(obj));
+    fs.writeFileSync(lodir("lib", repoName, author, "grump.json"), JSON.stringify(obj));
   }
 
   function injectVariables(vars, cb) {
