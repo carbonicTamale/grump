@@ -138,7 +138,7 @@ var install = function(repo, installedGrumps, isUpdate) {
     if(isUpdate){
       trimTable(grumpjson);
     }
-    
+  
     fs.writeFileSync(lodir('lib', 'grumpTable.json'), JSON.stringify(installedGrumps), 'utf8');
 
   })
@@ -185,8 +185,21 @@ var install = function(repo, installedGrumps, isUpdate) {
     
     for (var i = 0; i < keys.length; i++) {
       installedGrumps[keys[i]] = installedGrumps[keys[i]] || [];
-      installedGrumps[keys[i]].push(value);
+      if(checkPackage(installedGrumps[keys[i]], value)) {
+        installedGrumps[keys[i]].push(value);
+      }
     }
+  }
+
+  function checkPackage (grumps, grump) {
+    var pack;
+    for(var i = 0; i < grumps.length; i++) {
+      pack = grumps[i];
+      if (pack.author === grump.author && pack.repoName === grump.repoName) {
+        return false;
+      }
+    }
+    return true;
   }
 
 };
