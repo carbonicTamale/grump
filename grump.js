@@ -16,7 +16,6 @@ var prefix;
 try {
   prefix = fs.readFileSync(utils.lodir('lib', 'prefix.txt'));
 } catch (e) {
-  console.log("No alias set".red);
   prefix = '';
 }
 

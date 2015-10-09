@@ -74,7 +74,6 @@ var validLocalGrump = function(grump, installedGrumps) {
 var queryServer = function(grump, cb) {
   if (isVerbose()) console.log("Querying grumpjs server for " + grump.cyan);
 
-  console.log(serverApiUrl + grump);
   http.get(serverApiUrl + grump, function (res) {
     if (isVerbose()) console.log("Received statusCode " + res.statusCode.toString().green + " from server.");
 
@@ -140,6 +139,10 @@ var install = function(repo, installedGrumps, isUpdate) {
     }
   
     fs.writeFileSync(lodir('lib', 'grumpTable.json'), JSON.stringify(installedGrumps), 'utf8');
+
+    var successMessage = isUpdate ? "updated." : "installed."; 
+
+    console.log("Grump ", author.green + "/".green + repoName.green, " successfully " + successMessage);
 
   })
   .fail(function (err) {

@@ -35,5 +35,8 @@
   "bugs": {
     "url": "https://github.com/grumpishmermaids/grump/issues"
   },
-  "homepage": "https://github.com/grumpishmermaids/grump#readme"
+  "homepage": "https://github.com/grumpishmermaids/grump#readme",
+  "devDependencies": {
+    "node-inspector": "^0.12.3"
+  }
 }
