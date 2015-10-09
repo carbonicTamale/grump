@@ -55,10 +55,10 @@ if (args.length === 0 && cmds.indexOf(action) === -1) {
 
 //Install a package
 } else if (action === "install") {
-  require('./cmds/install')(args, installedGrumps, false);
+  require('./cmds/install')(args, installedGrumps);
 //Update a package
 } else if (action === "update") {
-  require('./cmds/update')(args, installedGrumps, true);
+  require('./cmds/update')(args, installedGrumps);
 // Specified command
 } else if (cmds.indexOf(action) !== -1) {
   require('./cmds/' + action)(args);
