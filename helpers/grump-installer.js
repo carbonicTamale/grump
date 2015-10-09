@@ -7,6 +7,9 @@ var inquirer = require("inquirer");
 module.exports = function (args, installedGrumps, isUpdate) {
 
   var grump = args[0];
+  
+  console.log('grump =', grump);
+
 
     // Query server for grumps
     utils.queryServer(grump, function(err, res) {
@@ -22,8 +25,22 @@ module.exports = function (args, installedGrumps, isUpdate) {
         if (res.grumps.length > 1) {
           console.log("Found multiple remote grumps named " + grump.cyan + ".");
           console.log("Please choose a specific grump from the list below and rerun your command.\n");
-          var choices = res.grumps.map(function(grump) {
-            return grump.author + "/" + grump.defaultCommand;
+
+
+          var choices = res.grumps.filter(function(grump) {
+            if (!installedGrumps.hasOwnProperty(grump.command))
+              return false;
+
+            var list = installedGrumps[grump.command];
+            
+            for (var i = 0; i < list.length; i++) {
+              if (list[i].author === grump.author && list[i].repoName === grump.repoName)
+                return false;
+            }
+            
+            return true;
+          }).map(function(grump) {
+            return grump.author + '/' + grump.repoName;
           });
 
           var question = {
@@ -38,7 +55,7 @@ module.exports = function (args, installedGrumps, isUpdate) {
             utils.install(res.grumps[chosenIndex], installedGrumps, isUpdate);
           });
           res.grumps.forEach(function(grump) {
-            console.log("\t" + grump.author.green + "/" + grump.defaultCommand.cyan);
+            console.log("\t" + grump.author.green + "/" + grump.repoName.cyan);
           });
 
           console.log("\n");
