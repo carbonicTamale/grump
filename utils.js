@@ -119,15 +119,19 @@ var queryServer = function(grump, cb) {
   });
 };
 
-var install = function(repo, installedGrumps) {
+var install = function(repo, installedGrumps, isUpdate) {
 
   var repoName = repo.repoName;
   var author  = repo.author;
 
   if (isVerbose()) { console.log("Installing " + author.green + "/" + repoName.cyan + "..."); }
 
-  // Recursively create command and author directory
+  if(isUpdate) {
+    fs.rmrfSync(lodir("lib", repoName, author));
+  }
+
   mkdirp.sync(lodir("lib", repoName, author));
+  // Recursively create command and author directory
 
   // Clone from github
   var gitCloneCommand = 'git clone ' + repo.cloneUrl + ' ' + lodir("lib", repoName, author);
@@ -147,10 +151,38 @@ var install = function(repo, installedGrumps) {
     for(var key in grumpjson.commands) {
       installScript(key);
     }
+
+    if(isUpdate){
+      trimTable(grumpjson);
+    }
     
     fs.writeFileSync(lodir('lib', 'grumpTable.json'), JSON.stringify(installedGrumps), 'utf8');
 
+  })
+  .fail(function (err) {
+    console.log("error".red, err);
   });
+
+  function trimTable (grumpjson) {
+
+    for(var key in installedGrumps) {
+
+      installedGrumps[key] = _.filter(installedGrumps[key], function (commandObj) {
+        if(commandObj.author === author && commandObj.repoName === repoName) {
+          var commandKey = commandObj.command;
+          if(!grumpjson.commands[commandKey]) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      if(installedGrumps[key].length === 0) {
+        delete installedGrumps[key];
+      }
+    }
+  }
+
 
   function installScript (command) {
 
@@ -158,7 +190,14 @@ var install = function(repo, installedGrumps) {
     var repoKey = repoName + ":" + command;
     var authorRepoKey = author + "/" + repoName + ":" + command;
     var commandKey = command;
-    var value = [lodir('lib', repoName, author), command];
+
+    var value = {
+      repoName: repoName,
+      author: author,
+      command: command,
+      path: lodir('lib', repoName, author)
+    };
+
     var keys = [authorKey, repoKey, authorRepoKey, commandKey];
     
     for (var i = 0; i < keys.length; i++) {
@@ -171,11 +210,12 @@ var install = function(repo, installedGrumps) {
 
 
 var run = function(data, args) {
-  var grump = grumpFromData(data);
-  var repoName = grump.repoName;
-  var author = grump.author;
-  var path = grump.path;
-  var command = grump.command;
+  var repoName = data.repoName;
+  var author = data.author;
+  var path = data.path;
+  var command = data.command;
+
+  var grumpjson;
   try {
     grumpjson = JSON.parse(fs.readFileSync(path + '/grump.json'));
   }
