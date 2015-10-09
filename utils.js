@@ -105,15 +105,19 @@ var queryServer = function(grump, cb) {
   });
 };
 
-var install = function(repo, installedGrumps) {
+var install = function(repo, installedGrumps, isUpdate) {
 
   var repoName = repo.repoName;
   var author  = repo.author;
 
   if (isVerbose()) { console.log("Installing " + author.green + "/" + repoName.cyan + "..."); }
 
-  // Recursively create command and author directory
+  if(isUpdate) {
+    fs.rmrfSync(lodir("lib", repoName, author));
+  }
+
   mkdirp.sync(lodir("lib", repoName, author));
+  // Recursively create command and author directory
 
   // Clone from github
   var gitCloneCommand = 'git clone ' + repo.cloneUrl + ' ' + lodir("lib", repoName, author);
@@ -130,10 +134,32 @@ var install = function(repo, installedGrumps) {
     for(var key in grumpjson.commands) {
       installScript(key);
     }
+
+    if(isUpdate){
+      trimTable();
+    }
     
     fs.writeFileSync(lodir('lib', 'grumpTable.json'), JSON.stringify(installedGrumps), 'utf8');
 
   });
+
+  function trimTable () {
+    for(var key in installedGrumps) {
+
+      key = _.filter(installedGrumps[key], function (commandObj) {
+        if(commandObj.author === author && commandObj.repoName === repoName) {
+          var commandKey = commandObj.command;
+          if(!grumpjson.commands[commandKey]) {
+            return false;
+          }
+        }
+      });
+
+      if(installedGrumps[key].length === 0) {
+        delete installedGrumps[key];
+      }
+    }
+  }
 
   function installScript (command) {
 

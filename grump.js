@@ -53,24 +53,26 @@ if (utils.isVerbose()) {
 if (args.length === 0 && cmds.indexOf(action) === -1) {
   console.log("usage: grump [action/package] [args]");
 
-  // Specified command
-} else if (cmds.indexOf(action) !== -1 && action !== 'install') {
+//Install a package
+} else if (action === "install") {
+  require('./cmds/install')(args, installedGrumps, false);
+//Update a package
+} else if (action === "update") {
+  require('./cmds/update')(args, installedGrumps, true);
+// Specified command
+} else if (cmds.indexOf(action) !== -1) {
   require('./cmds/' + action)(args);
 
-  // Version data
+// Version data
 } else if (args[0] === "--version" || args[0] === "-v") {
   console.log("grump version " + pack.version);
 
-  // Assume they want to run/install the package if no previous commands/actions match
+  // Assume they want to run an installed package if no previous commands/actions match
 } else {
-    if (action === 'install') {
-      require('./cmds/install')(args, installedGrumps);
+    //Add prefix
+    if(prefix) {
+      args[0] = prefix + ":" + args[0];
     }
-    else {
-      //Add prefix
-      if(prefix) {
-        args[0] = prefix + ":" + args[0];
-      }
-      require('./cmds/run')(args, installedGrumps);
-    }
+
+    require('./cmds/run')(args, installedGrumps);
 }

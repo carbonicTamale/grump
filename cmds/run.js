@@ -12,7 +12,7 @@ module.exports = function(args, installedGrumps) {
   }
 
   if (utils.isVerbose()) {
-    console.log("Received grump collection: " + collection.cyan);
+    console.log("Received grump collection: " + installedGrumps[args[0]].cyan);
 
   // Or else just run the grump
   } else {
