@@ -173,6 +173,7 @@ var install = function(repo, installedGrumps, isUpdate) {
     var repoKey = repoName + ":" + command;
     var authorRepoKey = author + "/" + repoName + ":" + command;
     var commandKey = command;
+    var grumps;
 
     var value = {
       repoName: repoName,
@@ -185,7 +186,10 @@ var install = function(repo, installedGrumps, isUpdate) {
     
     for (var i = 0; i < keys.length; i++) {
       installedGrumps[keys[i]] = installedGrumps[keys[i]] || [];
-      if(checkPackage(installedGrumps[keys[i]], value)) {
+      var grumpIndex = checkPackage(installedGrumps[keys[i]], value);
+      if(grumpIndex !== -1) {
+        installedGrumps[keys[i]][grumpIndex] = value;
+      } else {
         installedGrumps[keys[i]].push(value);
       }
     }
@@ -196,10 +200,10 @@ var install = function(repo, installedGrumps, isUpdate) {
     for(var i = 0; i < grumps.length; i++) {
       pack = grumps[i];
       if (pack.author === grump.author && pack.repoName === grump.repoName) {
-        return false;
+        return i;
       }
     }
-    return true;
+    return -1;
   }
 
 };
