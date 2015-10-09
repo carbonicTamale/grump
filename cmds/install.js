@@ -10,7 +10,7 @@ module.exports = function(args, installedGrumps) {
     if (utils.isVerbose()) {
       console.log("Error".red + ": grump " + grump.cyan + " was not found locally...querying server...");
     }
-    grumpInstaller(args, installedGrumps);
+    grumpInstaller(args, installedGrumps, true);
   }
   else {
     console.log('Grump already installed.');
