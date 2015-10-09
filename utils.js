@@ -136,23 +136,28 @@ var install = function(repo, installedGrumps, isUpdate) {
     }
 
     if(isUpdate){
-      trimTable();
+      trimTable(grumpjson);
     }
     
     fs.writeFileSync(lodir('lib', 'grumpTable.json'), JSON.stringify(installedGrumps), 'utf8');
 
+  })
+  .fail(function (err) {
+    console.log("error".red, err);
   });
 
-  function trimTable () {
+  function trimTable (grumpjson) {
+
     for(var key in installedGrumps) {
 
-      key = _.filter(installedGrumps[key], function (commandObj) {
+      installedGrumps[key] = _.filter(installedGrumps[key], function (commandObj) {
         if(commandObj.author === author && commandObj.repoName === repoName) {
           var commandKey = commandObj.command;
           if(!grumpjson.commands[commandKey]) {
             return false;
           }
         }
+        return true;
       });
 
       if(installedGrumps[key].length === 0) {
@@ -160,6 +165,7 @@ var install = function(repo, installedGrumps, isUpdate) {
       }
     }
   }
+
 
   function installScript (command) {
 
